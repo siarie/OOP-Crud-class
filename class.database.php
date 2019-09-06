@@ -1,21 +1,35 @@
 <?php
 /**
  * @author Sri Aspari <sriaspari@gmail.com>
- * @version 1.0.0 
+ * @version 1.0.1
 **/
 class database
 {
-	// Private variable to setup database
+	/** 
+	* private variables for conection to MYSQL database.
+	*
+	* Change as required
+	* @var string
+	*/
 	private $dbhost = 'localhost';
 	private $dbuser = 'root';
 	private $dbpass = '';
 	private $dbname = 'db_cv';
 
+	/**
+	 * MYSQLi Object variable
+	 * @var object
+	 */
+	public $db;
+	/**
+	 * Query result
+	 * @var array
+	 */
+	public $result = [];
 
-	public $db; // this variable used for mysqli object
-	public $result = []; // used for return a result of a query
-
-	// This is a function will be automatically loaded by default
+	/**
+	 * Autoload database connection
+	 */
 	public function __construct() {
 		// create connection with mysqli object
 		$this->db = new mysqli($this->dbhost,$this->dbuser,$this->dbpass,$this->dbname);
@@ -28,13 +42,15 @@ class database
 		}
 	}
 
-	/*
-		This is a read function with a method:
-		$table => a table you want select
-		$rows  => a column you want select 'Default valu is "*" will be select all column on the table
-		$join	=> fill the method if you want to join with another database or table, leave it if you dont want.
-		$join, $where, $order, and $limit is a optional method you can leave it if you dont want to use
-	*/
+	/**
+	 * Select Table
+	 * @param string table Name of table to be select
+	 * @param string rows Column to be display
+	 * @param string join Join statments
+	 * @param string where Used to filter record
+	 * @param string order To sort the result-set in ascending or descending order.
+	 * @param string limit Specify the number of records to return
+	 */
 	public function read($table, $rows = '*', $join = null, $where = null, $order = null, $limit = null)
 	{
 		$sql = 'SELECT '.$rows.' FROM '.$table;
@@ -59,15 +75,11 @@ class database
 		return $data;
 	}
 
-	/*
-		This is a function to insert to database. there are two methods you must be filled
-		$table => name of table you want to insert
-		$data => this option must be associative array. Example:
-			$data = [
-				'username'	=> 'anybody',
-				'email'		=> 'example@mail.net'
-			]
-	*/
+	/**
+	 * Add Record
+	 * @param string table Destionation table name
+	 * @param array data Data to be insert to database
+	 */
 	public function insert($table, $data = array())
 	{
 		$column = implode('`, `', array_keys($data)); // implode array keys
@@ -83,12 +95,12 @@ class database
 		}
 	}
 
-	/*
-		This is a function to update database. there are several method that are the same
-		with insert funtion. you must set '$where' for this function work properly
-		
-			$where = 'ID = 1' or you can set ID on the variable
-	*/
+	/**
+	 * Update Record
+	 * @param string table Destionation table name
+	 * @param array data Data to be modify
+	 * @param string where Specify record to be update
+	 */
 	public function update($table, $data=array(), $where)
 	{
 		$value = array();
@@ -110,9 +122,11 @@ class database
 		}
 	}
 
-	/*
-		function to delete field in the table
-	*/
+	/**
+	 * Delete Record
+	 * @param string table Name of table to be select
+	 * @param string where specify record to be delete
+	 */
 	public function delete($table, $where)
 	{
 		$sql = 'DELETE FROM '.$table.' WHERE ' . $where;
